@@ -1,0 +1,8 @@
+# 忽略arxiv_papers文件夹
+arxiv_papers/
+
+# 忽略Semantic_scholar_papers文件夹
+Semantic_scholar_papers/
+
+# 忽略papers_db.json文件
+papers_db.json 
