@@ -220,18 +220,11 @@ def build_arxiv_query(criteria: SearchCriteria) -> str:
     query_parts = []
     
     # 基本关键词搜索
-    if criteria.keywords is not None:  # 改为明确检查None
-        if criteria.keywords:  # 如果有具体关键词
-            # 用逗号分隔关键词，每个关键词都可以包含空格
-            keywords = [k.strip() for k in criteria.keywords.split(",")]
-            keyword_parts = []
-            for keyword in keywords:
-                # 对于包含空格的关键词，加上引号
-                if ' ' in keyword:
-                    keyword = f'"{keyword}"'
-                keyword_parts.append(f'(ti:{keyword} OR abs:{keyword})')
-            if keyword_parts:
-                query_parts.append("(" + " OR ".join(keyword_parts) + ")")
+    if criteria.keywords is not None:
+        if criteria.keywords:
+            # 保留用户输入的 AND、OR 逻辑
+            keywords = criteria.keywords.replace(',', ' OR ')  # 默认逗号分隔转为OR
+            query_parts.append(f"(ti:({keywords}) OR abs:({keywords}))")
     
     # 标题搜索
     if criteria.title:
@@ -762,7 +755,7 @@ def get_keywords_input() -> str:
     
     print("\n选项:")
     print("- 输入数字(1-40)选择预设关键词组合")
-    print("- 输入'c'自定义关键词(用逗号分隔)")
+    print("- 输入'c'自定义关键词")
     print("- 输入'null'搜索所有论文")
     print("- 直接回车使用默认值")
     
@@ -771,10 +764,27 @@ def get_keywords_input() -> str:
     if choice.lower() == 'null':
         return None
     elif choice.lower() == 'c':
-        return get_user_input(
-            "请输入自定义关键词，多个关键词用逗号分隔",
-            "Artificial Intelligence, AI, Machine Learning"
+        print("\n=== 搜索语法说明 ===")
+        print("1. 基本运算符:")
+        print("   - AND: 同时包含两个关键词")
+        print("   - OR:  包含任意一个关键词")
+        print("   - NOT: 不包含某个关键词")
+        print("\n2. 使用示例:")
+        print('   - 简单搜索: "machine learning"')
+        print('   - AND搜索: "hidden markov" AND "reinforcement learning"')
+        print('   - OR搜索:  "multi arms bandit" OR "thompson sampling"')
+        print('   - NOT搜索: "machine learning" NOT "deep learning"')
+        print('   - 组合搜索: ("hidden markov" OR "markov chain") AND "reinforcement learning"')
+        print("\n3. 注意事项:")
+        print("   - 包含空格的短语用引号括起来")
+        print("   - 可以使用括号组合多个条件")
+        print("   - AND、OR、NOT 需要大写")
+        print("   - 不加运算符时默认用 OR 连接")
+        
+        custom_keywords = get_user_input(
+            "\n请输入自定义关键词（按照上述语法）"
         )
+        return custom_keywords if custom_keywords else None
     else:
         try:
             return presets[choice]["keywords"]
