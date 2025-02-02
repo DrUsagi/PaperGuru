@@ -7,6 +7,7 @@ from datetime import datetime
 from enum import Enum
 from dataclasses import dataclass
 from typing import List, Optional, Dict, Any
+import time
 
 class SortOrder(Enum):
     """论文排序方式"""
@@ -377,6 +378,31 @@ def update_download_info(readme_path: str, paper, citation_info: dict, index: in
         
         f.write(f"| {index} | {paper.title} | {authors} | {pub_date} | {citations} |\n")
 
+def download_paper(url, filepath, max_retries=3):
+    """下载论文PDF，支持重试"""
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            
+            # 验证是否为PDF文件
+            if 'application/pdf' in response.headers.get('content-type', ''):
+                with open(filepath, 'wb') as f:
+                    f.write(response.content)
+                return True
+            else:
+                print(f"下载的文件不是PDF格式")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                print(f"下载失败，正在重试 ({attempt + 1}/{max_retries})")
+                time.sleep(2 ** attempt)  # 指数退避
+            else:
+                print(f"下载PDF失败: {str(e)}")
+                return False
+    return False
+
 def download_papers(criteria: SearchCriteria, download_dir="arxiv_papers", db_path="papers_db.json"):
     """根据搜索条件从arXiv下载论文"""
     # 创建本次下载的会话目录和说明文件
@@ -492,23 +518,12 @@ def download_papers(criteria: SearchCriteria, download_dir="arxiv_papers", db_pa
                     filepath = os.path.join(session_dir, filename)
                 
                 # 下载PDF
-                try:
-                    if not os.path.exists(filepath):
-                        response = requests.get(paper.pdf_url, timeout=30)
-                        response.raise_for_status()
-                        
-                        with open(filepath, 'wb') as f:
-                            f.write(response.content)
-                        
-                        print(f"\n成功下载论文: {paper.title}")
-                        
-                        # 更新说明文件
-                        update_download_info(readme_path, paper, citation_info, papers_to_download.index((paper, citation_info)) + 1)
-                        
-                except Exception as e:
-                    print(f"\n下载PDF失败 {paper.title}: {str(e)}")
-                    continue
-                
+                if download_paper(paper.pdf_url, filepath):
+                    print(f"\n成功下载论文: {paper.title}")
+                    
+                    # 更新说明文件
+                    update_download_info(readme_path, paper, citation_info, papers_to_download.index((paper, citation_info)) + 1)
+                    
                 # 保存元数据
                 try:
                     db["papers"][paper_id] = {
