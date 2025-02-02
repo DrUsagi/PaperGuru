@@ -1,5 +1,6 @@
 # 忽略arxiv_papers文件夹
 arxiv_papers/
+AGI_papers
 
 # 忽略Semantic_scholar_papers文件夹
 Semantic_scholar_papers/
