@@ -332,9 +332,20 @@ def create_download_session_dir(base_dir: str, criteria: SearchCriteria) -> tupl
     if not os.path.exists(base_dir):
         os.makedirs(base_dir)
     
-    # 生成会话目录名称（使用时间戳）
+    # 生成主题名称
+    if criteria.keywords:
+        # 清理关键词，生成安全的文件夹名
+        topic = criteria.keywords.replace('"', '').replace('AND', '&').replace('OR', '-')
+        topic = ''.join(c for c in topic if c.isalnum() or c in ('&', '-', '_', ' '))
+        # 限制长度
+        if len(topic) > 50:
+            topic = topic[:47] + "..."
+    else:
+        topic = "all_papers"
+    
+    # 生成会话目录名称（主题+时间戳）
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    session_name = f"download_session_{timestamp}"
+    session_name = f"{topic}_{timestamp}"
     session_dir = os.path.join(base_dir, session_name)
     os.makedirs(session_dir)
     
