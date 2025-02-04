@@ -794,8 +794,8 @@ def get_preset_keywords() -> dict:
             "keywords": "Human-AI Programming, Collaborative Coding, AI-Human Collaboration, Pair Programming with AI"
         },
         "50": {
-            "name": "职业发展影响",
-            "keywords": "Software Career Impact, Programming Career, Future of Software Development, Developer Career Evolution"
+            "name": "AI对程序员职业影响",
+            "keywords": "AI Impact on Programming Jobs, Software Engineer Future, Programming Career AI Impact, Developer Job Transformation, AI Replace Programmer, Coding Career Evolution, Programming Profession AI, Developer Employment AI, Software Engineering Future, Programming Job Market AI"
         }
     }
     return presets
