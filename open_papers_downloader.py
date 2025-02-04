@@ -37,7 +37,7 @@ class SearchCriteria:
 
 def get_preset_keywords() -> dict:
     """返回预设的关键词组合"""
-    return {
+    presets = {
         # 基础AI方向 (1-5)
         "1": {
             "name": "通用AI",
@@ -212,8 +212,53 @@ def get_preset_keywords() -> dict:
         "40": {
             "name": "AI集成",
             "keywords": "AI Integration, AI Deployment, AI Implementation, Enterprise AI Integration"
+        },
+
+        # AI编程助手 (41-45)
+        "41": {
+            "name": "AI编程助手",
+            "keywords": "AI Code Assistant, Code Generation, Programming Assistant, Code Completion, Code Synthesis"
+        },
+        "42": {
+            "name": "智能IDE",
+            "keywords": "Intelligent IDE, AI IDE, Smart Code Editor, Intelligent Programming Environment"
+        },
+        "43": {
+            "name": "代码理解",
+            "keywords": "Code Understanding, Program Comprehension, Code Intelligence, Source Code Analysis"
+        },
+        "44": {
+            "name": "程序修复",
+            "keywords": "Program Repair, Automated Bug Fixing, Code Debugging, Automated Program Repair"
+        },
+        "45": {
+            "name": "程序员增强",
+            "keywords": "Developer Productivity, Programmer Assistance, Software Development AI, Developer Tools"
+        },
+
+        # AI对程序员的影响 (46-50)
+        "46": {
+            "name": "程序员技能演变",
+            "keywords": "Programming Skills Evolution, Developer Skills, AI Impact on Programming, Future of Programming"
+        },
+        "47": {
+            "name": "工作效率研究",
+            "keywords": "Developer Productivity, Programming Efficiency, Coding Speed, Development Performance"
+        },
+        "48": {
+            "name": "编程学习变革",
+            "keywords": "Programming Education, Learning to Code with AI, AI-assisted Learning, Programming Teaching"
+        },
+        "49": {
+            "name": "人机协作编程",
+            "keywords": "Human-AI Programming, Collaborative Coding, AI-Human Collaboration, Pair Programming with AI"
+        },
+        "50": {
+            "name": "职业发展影响",
+            "keywords": "Software Career Impact, Programming Career, Future of Software Development, Developer Career Evolution"
         }
     }
+    return presets
 
 def load_paper_database(db_path):
     """加载论文数据库"""
@@ -253,7 +298,7 @@ def get_keywords_input() -> str:
         print(f"{key}. {value['name']}: {value['keywords']}")
     
     print("\n选项:")
-    print("- 输入数字(1-40)选择预设关键词组合")
+    print("- 输入数字(1-50)选择预设关键词组合")
     print("- 输入'c'自定义关键词(用逗号分隔)")
     print("- 输入'null'搜索所有论文")
     print("- 直接回车使用默认值")
